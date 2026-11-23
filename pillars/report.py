@@ -35,6 +35,12 @@ def _bloat_line(soft):
     return 'The code is lean, no bloat found.' if b['pass'] else f"The code carries bloat in {len(b['violations'])} place(s) (unused, duplicated, or oversized)."
 
 
+def _security_line(soft):
+    s = soft.get('security', {'pass': True, 'violations': []})
+    return 'No vulnerabilities or exploitable patterns found.' if s['pass'] else \
+        f"Security: {len(s['violations'])} finding(s) (vulnerable, brittle, or exploitable). These block."
+
+
 def _libraries_line(soft):
     lib = soft.get('libraries', {})
     n = len(lib.get('reported', []))
@@ -68,6 +74,7 @@ def summary(report):
            '- ' + _style_line(soft),
            '- ' + _direction_line(soft),
            '- ' + _bloat_line(soft),
+           '- ' + _security_line(soft),
            '- ' + _libraries_line(soft),
            '', '## AI',
            '- ' + ('Has done its part: ' + ai['self_check'] if ai['pass'] else 'Has not recorded its part yet.'),
@@ -103,6 +110,8 @@ def detail(report):
     out += [f"- {v}" for v in soft['direction']['violations']] or ['- none']
     out.append('\n### Bloat')
     out += [f"- {v}" for v in soft['bloat']['violations']] or ['- none']
+    out.append('\n### Security (vulnerable, brittle, exploitable)')
+    out += [f"- {v}" for v in soft.get('security', {}).get('violations', [])] or ['- none']
     out.append('\n### Third-party libraries (reported)')
     out += [f"- {v}" for v in soft.get('libraries', {}).get('reported', [])] or ['- none flagged']
     return '\n'.join(out)

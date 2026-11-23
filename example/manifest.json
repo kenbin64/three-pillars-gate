@@ -55,6 +55,9 @@
     "libraries": {
       "block_on_vulnerable": false,
       "min_severity": "high"
+    },
+    "security": {
+      "no_assert_validation": true
     }
   },
   "ai": {

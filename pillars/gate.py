@@ -8,7 +8,7 @@ import json
 import os
 import sys
 
-from pillars import engines, config, report as report_mod
+from pillars import engines, config, report as report_mod, report_html
 
 
 def _sha(paths):
@@ -79,6 +79,8 @@ if __name__ == '__main__':
 
     # The AI reads this: the machine-readable version it corrects from. Always written, pass or block.
     json.dump(rep, open(os.path.join(here, 'report.json'), 'w', encoding='utf-8'), indent=2)
+    # The visual report: color-coded dots by severity, for a glance. Open report.html in a browser.
+    open(os.path.join(here, 'report.html'), 'w', encoding='utf-8').write(report_html.html(rep))
 
     if rep['certified']:
         # The final report: issued only when every pillar is green and the human has given the final word.

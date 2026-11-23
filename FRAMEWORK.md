@@ -64,6 +64,12 @@ software to do the thinking only the AI can do. The human keeps both pointed at 
 - Verifies syntax, and tests for modularity. It flags spaghetti, deeply nested or sprawling functions, and functions
   that are hard to test, because a function too tangled to test easily is a function to break up. It does not just
   say the code is bad; it points at the function and suggests splitting it, so the AI or the person can act on it.
+- Checks for security: vulnerabilities, brittle code, and anything that could be exploited, from code built at
+  runtime and unsafe deserialization to shell injection, hardcoded secrets, and checks that vanish in production.
+- Reports with severity, color-coded. Every check and every finding carries a severity, shown as a colored dot: a
+  show-stopper and a critical are red, a major is orange, a minor is yellow, a reported-only item is blue, and a
+  pass is green. The report has a testing-status strip of dots too, so a person sees where things stand at a glance.
+  The visual report (report.html) sits beside the plain report for the human and the machine report for the AI.
 - Does all the testing, through TestThisPuppy: runs the tests, tests the tests (mutation), checks the code
   against the rules and the human's direction, scans the libraries. Software does the heavy lifting, with the AI
   assisting where judgment is needed.

@@ -43,6 +43,9 @@
       "approved": false,
       "by": "",
       "date": ""
+    },
+    "security": {
+      "no_assert_validation": true
     }
   },
   "ai": {

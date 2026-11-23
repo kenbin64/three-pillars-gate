@@ -6,7 +6,7 @@ import json
 import os
 import subprocess
 
-from pillars import mutate, style, criteria, bloat
+from pillars import mutate, style, criteria, bloat, security
 
 TESTTHISPUPPY = os.environ.get('TESTTHISPUPPY', r'C:\projects\testthispuppy')
 
@@ -60,8 +60,9 @@ def _native(man, base, sources, test_files):
     r['direction'] = {'pass': True, 'violations': criteria.check(sources, test_files, man['human'].get('criteria', []))}
     r['direction']['pass'] = not r['direction']['violations']
     r['bloat'] = _collect(sources, lambda s: bloat.check(s, man['human'].get('bloat', {})))
+    r['security'] = _collect(sources, lambda s: security.check(s, man['human'].get('security', {})))
     r['libraries'] = _library_result([], man)
-    r['pass'] = all(r[k]['pass'] for k in ('tests', 'mutation', 'style', 'direction', 'bloat', 'libraries'))
+    r['pass'] = all(r[k]['pass'] for k in ('tests', 'mutation', 'style', 'direction', 'bloat', 'security', 'libraries'))
     return r
 
 
@@ -88,8 +89,9 @@ def _testthispuppy(man, base):
     unit = find(kind='unit')
     mut = find(kind='mutation')
     vuln = [x['detail'] for x in results if 'VulnerableLibrary' in x['name']]
+    sec_ok = next((x['passed'] for x in results if x['kind'] == 'code' and x['name'].startswith('security')), True)
     code_ok = all(x['passed'] for x in results if x['kind'] == 'code' and 'VulnerableLibrary' not in x['name']
-                  and 'libraries' not in x['name'])
+                  and 'libraries' not in x['name'] and not x['name'].startswith('security'))
     direction = criteria.check([], [], [r for r in man['human'].get('criteria', []) if r['rule'] != 'min_tests'])
     r = {
         'tests': {'pass': unit['passed'], 'detail': unit['detail']},
@@ -98,7 +100,8 @@ def _testthispuppy(man, base):
         'style': {'pass': code_ok, 'violations': [] if code_ok else ['see TestThisPuppy code-fixes.md']},
         'direction': {'pass': not direction, 'violations': direction},
         'bloat': {'pass': code_ok, 'violations': []},
+        'security': {'pass': sec_ok, 'violations': [] if sec_ok else ['see TestThisPuppy code-fixes.md (security findings)']},
         'libraries': _library_result(vuln, man),
     }
-    r['pass'] = all(r[k]['pass'] for k in ('tests', 'mutation', 'style', 'direction', 'bloat', 'libraries'))
+    r['pass'] = all(r[k]['pass'] for k in ('tests', 'mutation', 'style', 'direction', 'bloat', 'security', 'libraries'))
     return r
