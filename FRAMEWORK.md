@@ -57,6 +57,10 @@ software to do the thinking only the AI can do. The human keeps both pointed at 
   of the check, not a nicety.
 - Tests not just the operation but the code itself, and checks that it complies with the direction the human gave.
   Running is not enough; the code has to be the code the human asked for.
+- Captures exceptions and tests the error paths, not just the happy path. It catches any exception the code throws,
+  reads the stack trace to pinpoint where it came from, and can actively test to invoke exceptions, driving the code
+  into its failure cases to prove it handles them the way the human specified. Code that only works when everything
+  goes right is not done.
 - Does all the testing, through TestThisPuppy: runs the tests, tests the tests (mutation), checks the code
   against the rules and the human's direction, scans the libraries. Software does the heavy lifting, with the AI
   assisting where judgment is needed.
