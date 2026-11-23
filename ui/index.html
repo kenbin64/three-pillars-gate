@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Pillars gate config</title>
+<style>
+  :root{
+    --navy:#0b1020; --panel:#121a33; --panel2:#0f1a3c; --line:#2b3a6b; --ink:#ffffff;
+    --dim:#cfd8ff; --accent:#ffb74d; --teal:#4dd0e1; --ok:#58d68d; --bad:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--navy);color:var(--ink);font-family:"Segoe UI",system-ui,Arial,sans-serif;font-size:15px}
+  a{color:var(--teal)}
+  .wrap{display:grid;grid-template-columns:230px 1fr 420px;min-height:100vh}
+  @media(max-width:1100px){.wrap{grid-template-columns:1fr}}
+  nav{background:var(--panel2);border-right:1px solid var(--line);padding:18px 14px}
+  nav h1{font-size:18px;margin:0 0 4px;color:var(--accent)}
+  nav p{font-size:12px;color:var(--dim);margin:0 0 18px}
+  nav a{display:block;color:var(--dim);text-decoration:none;padding:8px 10px;border-radius:8px;margin-bottom:2px;cursor:pointer}
+  nav a:hover,nav a.on{background:var(--panel);color:var(--ink)}
+  main{padding:22px 26px;max-width:720px}
+  section{margin-bottom:30px}
+  h2{color:var(--accent);font-size:20px;border-bottom:1px solid var(--line);padding-bottom:8px;margin:0 0 14px}
+  label{display:block;font-size:13px;color:var(--dim);margin:12px 0 4px}
+  input[type=text],input[type=number],input[type=date],select,textarea{
+    width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:9px 11px;font-size:14px;font-family:inherit}
+  textarea{min-height:70px;resize:vertical}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>div{flex:1;min-width:120px}
+  .check{display:flex;align-items:center;gap:9px;margin:9px 0;font-size:14px;color:var(--ink)}
+  .check input{width:18px;height:18px;accent-color:var(--accent)}
+  .hint{font-size:12px;color:var(--dim);margin:3px 0 0}
+  .crit{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+  .btn{background:var(--accent);color:var(--navy);border:0;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:14px}
+  .btn.ghost{background:transparent;color:var(--teal);border:1px solid var(--line)}
+  .small{font-size:12px;padding:6px 11px}
+  aside{background:var(--panel2);border-left:1px solid var(--line);padding:18px 16px;position:sticky;top:0;height:100vh;overflow:auto}
+  aside h2{font-size:16px}
+  pre{background:#0a1228;border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;font-size:12px;color:var(--dim);white-space:pre-wrap;word-break:break-word}
+  .ttp{border:1px dashed var(--teal);border-radius:10px;padding:12px;margin-top:10px}
+  .pill{display:inline-block;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:12px;color:var(--teal);margin:2px}
+  .foot{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <h1>Three Pillars</h1>
+    <p>Build the gate config. Check the common things, or edit the JSON. One file, shareable on any workstation or server.</p>
+    <a data-go="product" class="on">Product</a>
+    <a data-go="direction">Human direction</a>
+    <a data-go="style">Coding style</a>
+    <a data-go="bloat">Bloat</a>
+    <a data-go="libraries">Libraries</a>
+    <a data-go="engine">Engine (TestThisPuppy)</a>
+    <a data-go="people">AI and sign-off</a>
+    <a data-go="json">JSON in / out</a>
+  </nav>
+
+  <main>
+    <section id="product">
+      <h2>Product</h2>
+      <div class="row">
+        <div><label>Name</label><input type="text" id="name" value="money"></div>
+        <div><label>Version</label><input type="text" id="version" value="1.0"></div>
+      </div>
+      <label>Language</label>
+      <select id="language">
+        <option value="python">Python (checked natively)</option>
+        <option value="java">Java (TestThisPuppy)</option>
+        <option value="javascript">JavaScript (TestThisPuppy)</option>
+        <option value="css">CSS (TestThisPuppy)</option>
+      </select>
+      <p class="hint">The checks are the same for every language; the engine behind them changes. There is no separate config per language.</p>
+      <label>Folder the code lives in (relative to this config)</label><input type="text" id="dir" value="product">
+      <label>Source files, one per line</label><textarea id="source">money.py</textarea>
+      <label>Test files, one per line</label><textarea id="test_files">test_money.py</textarea>
+      <label>Test command (must exit non-zero if a test fails)</label><input type="text" id="test_cmd" value="python -m unittest -q test_money">
+      <label>Mutation bar: least percent of planted bugs the tests must catch</label>
+      <input type="number" id="mutation" value="90" min="0" max="100">
+      <p class="hint">This tests the tests. Weak tests that pass but catch nothing are blocked here.</p>
+    </section>
+
+    <section id="direction" hidden>
+      <h2>Human direction (your own tests and checks)</h2>
+      <p class="hint">Your own checks, add as many as you like for the products in your domain. Each is an exact rule the software checks the code against: forbid a pattern, require a pattern, or require a minimum number of tests. Check a box or write the JSON, same result.</p>
+      <div id="crits"></div>
+      <div class="foot">
+        <button class="btn ghost small" onclick="addCrit('forbid','','')">+ forbid a pattern</button>
+        <button class="btn ghost small" onclick="addCrit('require','','')">+ require a pattern</button>
+        <button class="btn ghost small" onclick="addCrit('min_tests','5','cover the edges, not just the happy path')">+ minimum tests</button>
+      </div>
+    </section>
+
+    <section id="style" hidden>
+      <h2>Coding style</h2>
+      <div class="check"><input type="checkbox" id="no_em_dash" checked><label style="margin:0">No em-dashes or en-dashes</label></div>
+      <div class="check"><input type="checkbox" id="no_bare_except" checked><label style="margin:0">No bare "except:" (name the exception)</label></div>
+      <div class="check"><input type="checkbox" id="no_todo" checked><label style="margin:0">No TODO / FIXME left in shipped code</label></div>
+      <div class="check"><input type="checkbox" id="single_return" checked><label style="margin:0">One return per function, at the end</label></div>
+      <div class="row">
+        <div><label>Max line length</label><input type="number" id="max_line_length" value="120"></div>
+        <div><label>Max statements per function</label><input type="number" id="max_function_statements" value="20"></div>
+      </div>
+    </section>
+
+    <section id="bloat" hidden>
+      <h2>Bloat (part of the quality check)</h2>
+      <div class="check"><input type="checkbox" id="no_unused_imports" checked><label style="margin:0">No unused imports</label></div>
+      <div class="check"><input type="checkbox" id="no_unused_assignments" checked><label style="margin:0">No values assigned and never read</label></div>
+      <div class="row">
+        <div><label>Max file lines (split above this)</label><input type="number" id="max_file_lines" value="400"></div>
+        <div><label>Flag duplicated blocks of this many lines</label><input type="number" id="duplicate_block_lines" value="5"></div>
+      </div>
+    </section>
+
+    <section id="libraries" hidden>
+      <h2>Third-party libraries</h2>
+      <p class="hint">Known vulnerabilities in dependencies are reported by default so you see them. They only block the ship if you say you care.</p>
+      <div class="check"><input type="checkbox" id="block_on_vulnerable"><label style="margin:0">Block the ship on vulnerable libraries</label></div>
+      <label>If blocking, the least severity that blocks</label>
+      <select id="min_severity">
+        <option>low</option><option>medium</option><option>medium-high</option><option selected>high</option><option>critical</option>
+      </select>
+    </section>
+
+    <section id="engine" hidden>
+      <h2>Engine</h2>
+      <p class="hint">Python is checked natively. Java, JavaScript and CSS go to the one TestThisPuppy engine. These options unlock its features for this product.</p>
+      <div class="ttp" id="ttpBox">
+        <label>Depth</label>
+        <select id="ttp_level"><option>quick</option><option selected>standard</option><option>thorough</option></select>
+        <p class="hint" style="margin-top:10px">Checks TestThisPuppy runs at this depth:</p>
+        <div class="check"><input type="checkbox" id="ttp_mutation" checked><label style="margin:0">Test the tests (mutation, Java)</label></div>
+        <div class="check"><input type="checkbox" id="ttp_code" checked><label style="margin:0">Code checks (PMD, SpotBugs)</label></div>
+        <div class="check"><input type="checkbox" id="ttp_lint" checked><label style="margin:0">Lint (ESLint for JS, Stylelint for CSS)</label></div>
+        <div class="check"><input type="checkbox" id="ttp_libraries" checked><label style="margin:0">Library scan (OSV, needs Docker)</label></div>
+        <div class="check"><input type="checkbox" id="ttp_xss"><label style="margin:0">XSS check</label></div>
+        <div class="check"><input type="checkbox" id="ttp_site"><label style="margin:0">Site check (load, console errors, headers)</label></div>
+      </div>
+      <p class="hint" id="pyNote">Python uses the native checks above (tests, mutation, style, direction, bloat). The TestThisPuppy options apply to Java, JavaScript and CSS.</p>
+    </section>
+
+    <section id="people" hidden>
+      <h2>AI and the human's final word</h2>
+      <div class="check"><input type="checkbox" id="ai_authored" checked><label style="margin:0">AI has done its part (code and tests written)</label></div>
+      <label>AI self-check note</label><input type="text" id="ai_self" value="code and tests written to the human's direction; edges covered">
+      <div class="crit" style="margin-top:16px">
+        <div class="check"><input type="checkbox" id="approved"><label style="margin:0"><b>Final word:</b> the human certifies this is finished</label></div>
+        <div class="row">
+          <div><label>Signed by</label><input type="text" id="by" value=""></div>
+          <div><label>Date</label><input type="date" id="date"></div>
+        </div>
+        <p class="hint">Leave this unsigned while the loop is still running. Sign only when you are satisfied. Nothing ships without it.</p>
+      </div>
+    </section>
+
+    <section id="json" hidden>
+      <h2>JSON in and out</h2>
+      <p class="hint">Paste an existing config to load and edit it, or copy and download the one you built. The downloaded file is the gate config, shareable on any workstation or a server.</p>
+      <textarea id="loadbox" placeholder="Paste a manifest JSON here to load it"></textarea>
+      <div class="foot"><button class="btn ghost" onclick="loadJson()">Load this JSON</button></div>
+    </section>
+  </main>
+
+  <aside>
+    <h2>Live config</h2>
+    <div class="foot" style="margin:0 0 10px">
+      <button class="btn small" onclick="copyJson()">Copy</button>
+      <button class="btn small" onclick="downloadJson()">Download</button>
+      <span class="pill" id="valid">valid</span>
+    </div>
+    <pre id="out"></pre>
+  </aside>
+</div>
+
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const lines = (id) => $(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+
+// Left-nav section switching.
+document.querySelectorAll('nav a').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('nav a').forEach(x => x.classList.remove('on'));
+  a.classList.add('on');
+  document.querySelectorAll('main section').forEach(s => s.hidden = s.id !== a.dataset.go);
+}));
+
+// Criteria rows (the human's direction).
+function addCrit(rule, val, reason) {
+  const box = $('crits');
+  const d = document.createElement('div');
+  d.className = 'crit';
+  const isMin = rule === 'min_tests';
+  d.innerHTML = `
+    <div class="row">
+      <div style="max-width:150px"><label>Rule</label>
+        <select class="c-rule">
+          <option value="forbid"${rule==='forbid'?' selected':''}>forbid</option>
+          <option value="require"${rule==='require'?' selected':''}>require</option>
+          <option value="min_tests"${rule==='min_tests'?' selected':''}>min tests</option>
+        </select></div>
+      <div><label class="c-lbl">${isMin?'Count':'Pattern (regex)'}</label><input type="text" class="c-val" value="${val||''}"></div>
+    </div>
+    <label>Reason (why this is the law)</label><input type="text" class="c-reason" value="${reason||''}">
+    <div class="foot"><button class="btn ghost small" onclick="this.closest('.crit').remove();render()">remove</button></div>`;
+  box.appendChild(d);
+  d.querySelector('.c-rule').addEventListener('change', e => {
+    d.querySelector('.c-lbl').textContent = e.target.value === 'min_tests' ? 'Count' : 'Pattern (regex)';
+    render();
+  });
+  d.querySelectorAll('input,select').forEach(el => el.addEventListener('input', render));
+  render();
+}
+
+function readCrits() {
+  return [...document.querySelectorAll('#crits .crit')].map(c => {
+    const rule = c.querySelector('.c-rule').value;
+    const val = c.querySelector('.c-val').value.trim();
+    const reason = c.querySelector('.c-reason').value.trim();
+    if (rule === 'min_tests') return { rule, count: Number(val) || 0, reason };
+    return { rule, pattern: val, reason };
+  });
+}
+
+// Build the manifest the gate reads.
+function build() {
+  const lang = $('language').value;
+  const m = {
+    name: $('name').value, version: $('version').value, language: lang, dir: $('dir').value,
+    source: lines('source'), test_files: lines('test_files'), test_cmd: $('test_cmd').value,
+    thresholds: { mutation_min_score: Number($('mutation').value) },
+    human: {
+      criteria: readCrits(),
+      style: {
+        no_em_dash: $('no_em_dash').checked, max_line_length: Number($('max_line_length').value),
+        no_bare_except: $('no_bare_except').checked, no_todo: $('no_todo').checked,
+        single_return: $('single_return').checked, max_function_statements: Number($('max_function_statements').value)
+      },
+      bloat: {
+        max_file_lines: Number($('max_file_lines').value), no_unused_imports: $('no_unused_imports').checked,
+        no_unused_assignments: $('no_unused_assignments').checked, duplicate_block_lines: Number($('duplicate_block_lines').value)
+      },
+      libraries: { block_on_vulnerable: $('block_on_vulnerable').checked, min_severity: $('min_severity').value },
+      signoff: { approved: $('approved').checked, by: $('by').value, date: $('date').value }
+    },
+    ai: { authored: $('ai_authored').checked, self_check: $('ai_self').value }
+  };
+  if (lang !== 'python') {
+    m.engine = {
+      level: $('ttp_level').value,
+      checks: {
+        mutation: $('ttp_mutation').checked, code: $('ttp_code').checked, lint: $('ttp_lint').checked,
+        libraries: $('ttp_libraries').checked, xss: $('ttp_xss').checked, site: $('ttp_site').checked
+      }
+    };
+  }
+  return m;
+}
+
+function render() {
+  const m = build();
+  $('out').textContent = JSON.stringify(m, null, 2);
+  $('pyNote').style.display = $('language').value === 'python' ? '' : 'none';
+  $('ttpBox').style.opacity = $('language').value === 'python' ? 0.5 : 1;
+  $('valid').textContent = 'valid'; $('valid').style.color = 'var(--ok)';
+}
+
+function copyJson() { navigator.clipboard.writeText($('out').textContent).then(() => flash('copied')); }
+function downloadJson() {
+  const m = build();
+  const blob = new Blob([JSON.stringify(m, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = (m.name || 'gate') + '.manifest.json'; a.click();
+}
+function flash(t) { const v = $('valid'); const old = v.textContent; v.textContent = t; setTimeout(() => render(), 900); }
+
+function loadJson() {
+  let m;
+  try { m = JSON.parse($('loadbox').value); }
+  catch (e) { $('valid').textContent = 'bad JSON'; $('valid').style.color = 'var(--bad)'; return; }
+  const set = (id, v) => { if ($(id) && v !== undefined) { if ($(id).type === 'checkbox') $(id).checked = !!v; else $(id).value = v; } };
+  set('name', m.name); set('version', m.version); set('language', m.language); set('dir', m.dir);
+  if (m.source) $('source').value = m.source.join('\n');
+  if (m.test_files) $('test_files').value = m.test_files.join('\n');
+  set('test_cmd', m.test_cmd); set('mutation', m.thresholds && m.thresholds.mutation_min_score);
+  const h = m.human || {}, st = h.style || {}, bl = h.bloat || {}, lb = h.libraries || {}, sg = h.signoff || {}, ai = m.ai || {};
+  Object.entries(st).forEach(([k, v]) => set(k, v));
+  Object.entries(bl).forEach(([k, v]) => set(k, v));
+  set('block_on_vulnerable', lb.block_on_vulnerable); set('min_severity', lb.min_severity);
+  set('approved', sg.approved); set('by', sg.by); set('date', sg.date);
+  set('ai_authored', ai.authored); set('ai_self', ai.self_check);
+  $('crits').innerHTML = '';
+  (h.criteria || []).forEach(c => addCrit(c.rule, c.rule === 'min_tests' ? c.count : c.pattern, c.reason));
+  render();
+}
+
+// Wire every field to live-render, seed the default criteria, set today's date.
+document.querySelectorAll('main input,main select,main textarea').forEach(el => el.addEventListener('input', render));
+$('date').value = new Date().toISOString().slice(0, 10);
+addCrit('forbid', 'float\\(', 'money is integer cents, never floating point');
+addCrit('min_tests', '5', 'cover the edges, not just the happy path');
+render();
+</script>
+</body>
+</html>

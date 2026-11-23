@@ -1,0 +1,58 @@
+{
+  "_about": "Default Three Pillars gate config. Copy this, fill in the product bits (name, source, test_files, test_cmd, criteria), and sign it when you are satisfied. The common checks are already set; add to them. Build or edit it visually with ui/index.html.",
+  "name": "your-product",
+  "version": "0.1",
+  "language": "python",
+  "dir": "product",
+  "source": [],
+  "test_files": [],
+  "test_cmd": "",
+  "thresholds": {
+    "mutation_min_score": 90
+  },
+  "human": {
+    "_criteria_help": "Exact rules the code must follow. rule: 'forbid' (pattern must not appear), 'require' (pattern must appear), 'min_tests' (at least count test functions). Add your own.",
+    "criteria": [
+      {"rule": "min_tests", "count": 3, "reason": "cover the edges, not just the happy path"}
+    ],
+    "style": {
+      "no_em_dash": true,
+      "max_line_length": 120,
+      "no_bare_except": true,
+      "no_todo": true,
+      "single_return": true,
+      "max_function_statements": 20
+    },
+    "bloat": {
+      "max_file_lines": 400,
+      "no_unused_imports": true,
+      "no_unused_assignments": true,
+      "duplicate_block_lines": 5
+    },
+    "libraries": {
+      "block_on_vulnerable": false,
+      "min_severity": "high"
+    },
+    "signoff": {
+      "approved": false,
+      "by": "",
+      "date": ""
+    }
+  },
+  "ai": {
+    "authored": false,
+    "self_check": ""
+  },
+  "engine": {
+    "_note": "Used only for Java, JavaScript and CSS (TestThisPuppy). Python ignores this and uses the native checks.",
+    "level": "standard",
+    "checks": {
+      "mutation": true,
+      "code": true,
+      "lint": true,
+      "libraries": true,
+      "xss": false,
+      "site": false
+    }
+  }
+}

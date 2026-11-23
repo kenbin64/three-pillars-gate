@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+example/report.json
+example/report.md
+example/certificate.json
+example/manifest.iter*.json

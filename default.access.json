@@ -1,0 +1,67 @@
+{
+  "_about": "Default access policy, ready out of the box. The system runs with this until an admin sets the real domain rules. On one workstation the local user acts as admin, so nothing has to be configured to start. On a shared server, the admin edits this: adds users, assigns roles, and sets each role's domain. Admin sets the rules; this is the floor they stand on.",
+  "owner": "local",
+  "auth": {
+    "_about": "Login is pluggable and flexible. Default is a simple internal login, so it works with no setup. An org or person can keep it simple, or plug in their own: single sign-on (OIDC, SAML, LDAP), a cloud provider, social login (Google, GitHub, Microsoft), or a custom handler. Enable one or several. The config is the only thing that changes; the roles and the gate behind it stay the same.",
+    "default": "internal",
+    "enabled": ["internal"],
+    "available": ["internal", "oidc", "saml", "ldap", "google", "github", "microsoft", "custom"],
+    "allow_multiple": true,
+    "internal": {
+      "min_password_length": 8,
+      "lockout_after_tries": 5
+    },
+    "oidc": { "issuer": "", "client_id": "", "client_secret": "" },
+    "saml": { "metadata_url": "" },
+    "ldap": { "url": "", "base_dn": "" },
+    "social": {
+      "google": { "client_id": "", "client_secret": "" },
+      "github": { "client_id": "", "client_secret": "" },
+      "microsoft": { "client_id": "", "client_secret": "" }
+    },
+    "custom": { "handler": "", "_note": "Point at the org's own login solution." }
+  },
+  "ai_assist": {
+    "_about": "TestThisPuppy works with or without AI. Add a model to assist it (read failures, propose fixes, convert code to a readable form) or turn it off for pure deterministic checks. Configurable by the org or person.",
+    "enabled": false,
+    "provider": "none",
+    "available": ["none", "ollama", "anthropic", "openai", "custom"],
+    "model": "",
+    "directives_folder": "directives",
+    "default_directive": "directives/AI-DIRECTIVES.md",
+    "default_directive_backup": "directives/_default-backup/AI-DIRECTIVES.md"
+  },
+  "default_role": "dev",
+  "certify_roles": ["admin", "dev"],
+  "roles": {
+    "admin": {
+      "domains": ["*"],
+      "can": ["manage_users", "set_policy", "certify", "test", "develop", "view"],
+      "admin_management": {
+        "_note": "Besides managing other admins, all admins have the same control. These two are separable per admin, because some orgs want an admin who can add but not remove, and others want both. Set per admin in the users list.",
+        "can_add_admins": false,
+        "can_remove_admins": false
+      }
+    },
+    "dev": {
+      "domains": ["own"],
+      "can": ["develop", "certify", "test", "view"]
+    },
+    "test": {
+      "domains": ["assigned"],
+      "can": ["test", "view"]
+    },
+    "user": {
+      "domains": ["own_instance"],
+      "can": ["view", "run_production_checks"]
+    }
+  },
+  "invariant": {
+    "at_least_one_admin_can_add_and_remove": true,
+    "_note": "The system must always keep at least one admin with both can_add_admins and can_remove_admins, so you can never lock yourself out of admin management. Removing or downgrading the last such admin is refused. A single user holding all roles satisfies this automatically."
+  },
+  "out_of_the_box": {
+    "single_user_has_all_roles": true,
+    "_note": "A single user holds every role automatically: admin, dev, test and user all at once. So a solo developer has the whole system with no setup and can develop, test, certify and administer. Roles only separate once there is more than one person: the moment an admin adds a second user on a server, that admin assigns roles and domains, and the all-roles default no longer applies to the people they add."
+  }
+}

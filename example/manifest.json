@@ -1,0 +1,62 @@
+{
+  "name": "money",
+  "version": "1.0",
+  "language": "python",
+  "dir": "product",
+  "source": [
+    "money.py"
+  ],
+  "test_files": [
+    "test_money.py"
+  ],
+  "test_cmd": "python -m unittest -q test_money",
+  "thresholds": {
+    "mutation_min_score": 90
+  },
+  "human": {
+    "criteria": [
+      {
+        "rule": "forbid",
+        "pattern": "float\\(",
+        "reason": "money is integer cents, never floating point"
+      },
+      {
+        "rule": "forbid",
+        "pattern": "round\\(",
+        "reason": "use integer rounding, not float round()"
+      },
+      {
+        "rule": "min_tests",
+        "count": 5,
+        "reason": "cover the edges, not just the happy path"
+      }
+    ],
+    "style": {
+      "no_em_dash": true,
+      "max_line_length": 120,
+      "no_bare_except": true,
+      "no_todo": true,
+      "single_return": true,
+      "max_function_statements": 20
+    },
+    "bloat": {
+      "max_file_lines": 400,
+      "no_unused_imports": true,
+      "no_unused_assignments": true,
+      "duplicate_block_lines": 5
+    },
+    "signoff": {
+      "approved": true,
+      "by": "Ken Bingham",
+      "date": "2026-11-23"
+    },
+    "libraries": {
+      "block_on_vulnerable": false,
+      "min_severity": "high"
+    }
+  },
+  "ai": {
+    "authored": true,
+    "self_check": "code and tests written to the human's direction; integer-cents only; edges covered"
+  }
+}
