@@ -37,7 +37,9 @@
       "no_bare_except": true,
       "no_todo": true,
       "single_return": true,
-      "max_function_statements": 20
+      "max_function_statements": 20,
+      "max_nesting_depth": 4,
+      "max_branches": 12
     },
     "bloat": {
       "max_file_lines": 400,

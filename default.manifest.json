@@ -13,7 +13,11 @@
   "human": {
     "_criteria_help": "Exact rules the code must follow. rule: 'forbid' (pattern must not appear), 'require' (pattern must appear), 'min_tests' (at least count test functions). Add your own.",
     "criteria": [
-      {"rule": "min_tests", "count": 3, "reason": "cover the edges, not just the happy path"}
+      {
+        "rule": "min_tests",
+        "count": 3,
+        "reason": "cover the edges, not just the happy path"
+      }
     ],
     "style": {
       "no_em_dash": true,
@@ -21,7 +25,9 @@
       "no_bare_except": true,
       "no_todo": true,
       "single_return": true,
-      "max_function_statements": 20
+      "max_function_statements": 20,
+      "max_nesting_depth": 4,
+      "max_branches": 12
     },
     "bloat": {
       "max_file_lines": 400,

@@ -104,6 +104,10 @@
         <div><label>Max line length</label><input type="number" id="max_line_length" value="120"></div>
         <div><label>Max statements per function</label><input type="number" id="max_function_statements" value="20"></div>
       </div>
+      <div class="row">
+        <div><label>Max nesting depth (spaghetti / hard to test)</label><input type="number" id="max_nesting_depth" value="4"></div>
+        <div><label>Max branches per function (testability)</label><input type="number" id="max_branches" value="12"></div>
+      </div>
     </section>
 
     <section id="bloat" hidden>
@@ -237,7 +241,8 @@ function build() {
       style: {
         no_em_dash: $('no_em_dash').checked, max_line_length: Number($('max_line_length').value),
         no_bare_except: $('no_bare_except').checked, no_todo: $('no_todo').checked,
-        single_return: $('single_return').checked, max_function_statements: Number($('max_function_statements').value)
+        single_return: $('single_return').checked, max_function_statements: Number($('max_function_statements').value),
+        max_nesting_depth: Number($('max_nesting_depth').value), max_branches: Number($('max_branches').value)
       },
       bloat: {
         max_file_lines: Number($('max_file_lines').value), no_unused_imports: $('no_unused_imports').checked,

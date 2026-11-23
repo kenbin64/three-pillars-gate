@@ -19,6 +19,21 @@ def _statement_count(fn):
     return sum(1 for n in ast.walk(fn) if isinstance(n, ast.stmt)) - 1
 
 
+NEST = (ast.If, ast.For, ast.While, ast.With, ast.Try, ast.AsyncFor, ast.AsyncWith)
+
+
+def _max_nesting(node, depth=0):
+    # How deeply control flow nests. Deep nesting is spaghetti: hard to read, hard to test, a sign to break it up.
+    here = depth + (1 if isinstance(node, NEST) else 0)
+    children = list(ast.iter_child_nodes(node))
+    return max((_max_nesting(c, here) for c in children), default=here)
+
+
+def _branches(fn):
+    # A rough testability measure: each branch and each boolean operator is another path a test must cover.
+    return sum(1 for n in ast.walk(fn) if isinstance(n, (ast.If, ast.For, ast.While, ast.BoolOp, ast.ExceptHandler)))
+
+
 def check(source_path, rules):
     # Return a list of violations. An empty list means the code meets the style the human laid out.
     src = open(source_path, encoding='utf-8').read()
@@ -48,6 +63,12 @@ def check(source_path, rules):
             out.append(f'function {fn.name!r}: {_return_count(fn)} returns (Ken: one return at the end)')
         cap = rules.get('max_function_statements', 0)
         if cap and _statement_count(fn) > cap:
-            out.append(f'function {fn.name!r}: {_statement_count(fn)} statements over the {cap} limit')
+            out.append(f'function {fn.name!r}: {_statement_count(fn)} statements over the {cap} limit (break it up)')
+        nest = rules.get('max_nesting_depth', 0)
+        if nest and _max_nesting(fn) > nest:
+            out.append(f'function {fn.name!r}: nests {_max_nesting(fn)} deep over the {nest} limit (spaghetti, hard to test, break it up)')
+        paths = rules.get('max_branches', 0)
+        if paths and _branches(fn) > paths:
+            out.append(f'function {fn.name!r}: {_branches(fn)} branches over the {paths} limit (hard to test, split the logic)')
 
     return out
